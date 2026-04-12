@@ -3,7 +3,7 @@ This is a comprehensive guide on how to run AI models and coding agents locally 
 
 You’ll need a decent amount of RAM for this to work. Around 32GB is where things start getting interesting. I’m currently running 30B-class models with the same 128K context window as OpenAI Codex on an M3 MacBook Pro with 36GB of RAM — all locally.
 
-> ⚠️ This guide assumes familiarity with LLM concepts, inference engines, and basic system configuration. It is a good starting point for anyone who is building local AI systems or is experimenting with agent worflows.
+> ⚠️ This guide assumes familiarity with LLM concepts, inference engines, and basic system configuration. It is a good starting point for anyone who is building local AI systems or is experimenting with agent workflows.
 
 ## Why?
 Because it works — and surprisingly well. But more importantly: there are cost and privacy benefits of running AI locally.
@@ -224,7 +224,7 @@ You can now use your local model like cloud models - ask questions, write/summar
 > |<img width="299" height="268" alt="image" src="images/activitymonitor-gpu-history.png" />|<img width="275" height="186" alt="image" src="images/mactop-gpu-history.png" />|
 
 ## Config Settings
-In this section I'll explain various "levers" to control model behavior and Inference Engine / API Server settings
+In this section I’ll explain the various "levers" that control model behavior and Inference Engine / API server settings.
 
 ### Context Window
 This is by far the most important model parameter. This controls how much information can be sent to a model. For multi-turn conversations, all previous requests **and model responses** are sent back, so the context window can grow very large.
@@ -446,4 +446,4 @@ Start llama.cpp with `--models-preset <ini-file-path>` instead of `-hf` or `-m` 
 # Closing Thoughts
 ***Local AI on a Mac is no longer a toy experiment. With the right architectural choices — especially around quantization, context window sizing, and prompt caching — it becomes a viable daily driver for advanced workflows.***
 
-The result may not match trillion-parameter cloud models, but it is surprisingly capable — and entirely under your control.
+The results may not match trillion-parameter cloud models, but it is surprisingly capable — and entirely under your control.
