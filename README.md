@@ -51,7 +51,7 @@ Standalone GPUs still have more raw compute throughput, to set expectations corr
 
 This is a very simple diagram of all the components we'll be looking at:
 
-<img width="629" height="283" alt="image" src="https://github.com/user-attachments/assets/afc408cb-35bf-422b-a822-01c0de97aee1" />
+<img width="629" height="283" alt="image" src="images/arch-diagram.png" />
 
 ## Inference Engines
 An AI model, for the most part, is just a huge collection of numbers - the so-called "model weights". **Inference Engine** is where the actual linear algebra operations on the model weights happen when a model generates tokens. As of right now, there's no built-in general-purpose inference engine in MacOS, but there are free and/or open-source Mac inference engine implementations:
@@ -95,7 +95,7 @@ For both types the **total** number of parameters translates directly into **mem
 ### Model Formats
 There are two formats supported by the recommended inference engines:
  
- - MLX - Mac-specific model format (usually designated with "MLX" name or <img width="18" height="20" alt="image" src="https://github.com/user-attachments/assets/d7c428e9-2383-4c39-aafb-2f569f90d9a0" /> logo).
+ - MLX - Mac-specific model format (usually designated with "MLX" name or <img width="18" height="20" alt="image" src="images/mlx-logo.png" /> logo).
  - GGUF - llama.cpp model format created specifically for this engine, supports more advanced models and faster loading.
 
 LM Studio supports models in both formats (because it supports both inference engines). llama.cpp supports GGUF format only.
@@ -156,13 +156,13 @@ A useful heuristic:
 > Model file size should be ~60% of the amount of your RAM for useful results. With 32GB RAM you can run ~20GB disk size models.
 
 > :bulb: **Tip:** You can see model file sizes and fit estimates in LM Studio's model browser for both GGUF and MLX models:
-<br><img width="571" height="212" alt="image" src="https://github.com/user-attachments/assets/3edfae34-3779-4761-9e1a-c6af6f2d2961" />
+<br><img width="571" height="212" alt="image" src="images/lmstudio-model-quants.png" />
 
 ### Configuring VRAM
 Inference runs significantly faster when models use GPU cores instead of CPU cores, requiring them to reside in VRAM. Even though Macs have "Unified Memory", GPUs can only use some of it as VRAM.
 > :bulb: **Tip: Checking the amount of VRAM on your Mac**<br>
-> In LM Studio, click the "App Settings" gear icon <img width="24" height="24" alt="image" src="https://github.com/user-attachments/assets/c56d601a-8f6a-4bad-b57e-b7cfe49326ec" /> in the bottom left corner, navigate to the "Hardware" tab, and you'll see the available VRAM in the "Memory Capacity" section:<br>
-> <img width="344" height="107" alt="image" src="https://github.com/user-attachments/assets/32c43b99-7163-4c27-a992-756913434ea3" />
+> In LM Studio, click the "App Settings" gear icon <img width="24" height="24" alt="image" src="images/lmstudio-settings-icon.png" /> in the bottom left corner, navigate to the "Hardware" tab, and you'll see the available VRAM in the "Memory Capacity" section:<br>
+> <img width="344" height="107" alt="image" src="images/lmstudio-vram.png" />
 
 The default VRAM setting Macs come with is too low. To increase it, run:
 ```
@@ -191,26 +191,26 @@ Alternatively, it can be [built from source](https://github.com/ggml-org/llama.c
 ## Downloading and Running Models
 
 ### With LM Studio:
- 1. Go to "Model Search" on the left-hand side or the app: <img width="22" height="20" alt="image" src="https://github.com/user-attachments/assets/7fe5ca98-0095-4ca0-840d-9907d97d2cd4" />
+ 1. Go to "Model Search" on the left-hand side or the app: <img width="22" height="20" alt="image" src="images/lmstudio-model-search-icon.png" />
  2. Type the model name and quantization level, choose MLX or GGUF or both in the Format picker
  3. Select from a creator or community, hit "Download"
-<br><img width="1005" height="584" alt="image" src="https://github.com/user-attachments/assets/cf52404b-c27d-4afb-b54d-94c228c27a41" />
+<br><img width="1005" height="584" alt="image" src="images/lmstudio-model-search.png" />
  4. Go to "Chat" on the left, select the model from the dropdown on the top, and start chatting
-<br><img width="812" height="593" alt="image" src="https://github.com/user-attachments/assets/b0acdfcb-5f7f-4448-a12f-bfa9192a41e5" />
+<br><img width="812" height="593" alt="image" src="images/lmstudio-model-select.png" />
 
 ### With llama.cpp:
  1. Find the model on [HuggingFace Models portal](https://huggingface.co/models), preferably Unsloth version
  2. Choose the quant type on the right, and click on it
-<br><img width="499" height="446" alt="image" src="https://github.com/user-attachments/assets/9f0d47aa-5047-4b69-b01f-a98755449bc2" />
+<br><img width="499" height="446" alt="image" src="images/huggingface-model-quants.png" />
  3. Click "Use this model" dropdown and choose llama.cpp
-<br><img width="230" height="364" alt="image" src="https://github.com/user-attachments/assets/7ac60caf-4fca-4764-ac9e-f9b33234ce7e" />
+<br><img width="230" height="364" alt="image" src="images/huggingface-model-use.png" />
  4. On the next screen you'll see the command to launch:
    ```
    # Start a local OpenAI-compatible server with a web UI:
    llama-server -hf unsloth/Qwen3.5-35B-A3B-GGUF:Q4_K_M
    ```
  5. Go to http://localhost:8080 and chat with the model:
-   <br><img width="741" height="236" alt="image" src="https://github.com/user-attachments/assets/f681cd1f-eb64-49c5-a698-e73fdda7f560" />
+   <br><img width="741" height="236" alt="image" src="images/localhost-llama.cpp.png" />
 
 > :bulb: **Tip:** You can download a GGUF model using LM Studio and use it in both LM Studio **and** llama.cpp. In LM Studio's "My Models" tab, check the folder at the bottom (or change it for easier access). Then run:
 > ```
@@ -221,7 +221,7 @@ You can now use your local model like cloud models - ask questions, write/summar
 > :bulb: **Tip:** When generating, you want the GPU at or near 100%. You can check with Activity Monitor (Window → GPU History), or with [mactop](https://github.com/metaspartan/mactop) for more detail.
 > |Activity Monitor|mactop|
 > | :----------------------------------------------- | :----------------------------------------------- |
-> |<img width="299" height="268" alt="image" src="https://github.com/user-attachments/assets/11045de9-837a-4309-a5a6-d8aa2f3b23d0" />|<img width="275" height="186" alt="image" src="https://github.com/user-attachments/assets/3df2ceb7-014a-40f3-970c-67da479dd660" />|
+> |<img width="299" height="268" alt="image" src="images/activitymonitor-gpu-history.png" />|<img width="275" height="186" alt="image" src="images/mactop-gpu-history.png" />|
 
 ## Config Settings
 In this section I'll explain various "levers" to control model behavior and Inference Engine / API Server settings
@@ -245,7 +245,7 @@ How to set context window size:
 These control accuracy and "creativity" of the model responses: `temperature`, `top-k`, `top-p` and `min-p`. Check the model card on HuggingFace for recommended values for both regular question answering and coding respectively.
 
 In LM Studio: "My Models"→ gear icon next to model → "Inference" tab:
-<br><img width="280" height="557" alt="image" src="https://github.com/user-attachments/assets/17974460-796c-4bd9-8973-75b2160aa820" />
+<br><img width="280" height="557" alt="image" src="images/lmstudio-model-settings.png" />
 
 In llama.cpp: `llama-server` parameters:
 ```
@@ -336,9 +336,9 @@ Here's an example how to start llama.cpp server with the essential parameters I 
 llama-server -hf unsloth/Qwen3.5-35B-A3B-GGUF:Q4_K_M --jinja -fa on --temp 0.6 --top-p 0.95 --min-p 0.01 --top-k 20 -c 131072 -np 1
 ```
 
-LM Studio is a desktop app at its core, but it can function as an API server as well. Go to "Developer" <img width="30" height="29" alt="image" src="https://github.com/user-attachments/assets/4a19b029-4a2d-431e-ae55-a26a9ae4b251" /> tab and start the server:
+LM Studio is a desktop app at its core, but it can function as an API server as well. Go to "Developer" <img width="30" height="29" alt="image" src="images/lmstudio-developer-icon.png" /> tab and start the server:
 
-<img width="680" height="88" alt="image" src="https://github.com/user-attachments/assets/c1fb6833-bd5d-4ee5-8a37-8295ba43063e" />
+<img width="680" height="88" alt="image" src="images/lmstudio-server.png" />
 
 Configure port, authentication, and network access in "Server Settings" if needed. Click "Load Model" and choose your model. Previously configured parameters respected by the server.
 
