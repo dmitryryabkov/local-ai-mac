@@ -88,7 +88,7 @@ With each new generation of open-source/open-weight models released they're gett
 ### Model Types
 There are two main types of models right now:
  - **Dense** models - all parameters participate in token generation. This is the type assumed by default if nothing else is specified.
- - **Sparse** or **Mixture of Experts (MoE)** models - only some weights (active parameters) are used per token. They usually have the number of active parameters appended to their name. For example, `Qwen3.5-35B-A3B` is a 35B **total** parameter model, but only 3B of those are used to generate the next token. Which specific ones (the "experts" for this token) is dynamically decided by the model itself.
+ - **Sparse** or **Mixture of Experts (MoE)** models - only some weights (active parameters) are used per token. They usually have the number of active parameters appended to their name. For example, `Qwen3.6-35B-A3B` is a 35B **total** parameter model, but only 3B of those are used to generate the next token. Which specific ones (the "experts" for this token) is dynamically decided by the model itself.
 
 For both types the **total** number of parameters translates directly into **memory requirements**, but the processing power required depends more on the number of **active** parameters. Since for dense models all parameters are active, similarly sized MoE models are significantly faster while at the same time being equally capable or even better.
 
@@ -102,7 +102,7 @@ LM Studio supports models in both formats (because it supports both inference en
 
 ### Recommended Models
 Medium-size models (~20-30B parameters) fit into higher tier consumer hardware and are getting good enough for practical usage. Here are some examples:
- - [Qwen3.5-35B-A3B](https://huggingface.co/Qwen/Qwen3.5-35B-A3B) - 35 billion parameter Mixture of Experts model with 3 billion active parameters
+ - [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) - 35 billion parameter Mixture of Experts model with 3 billion active parameters
  - [Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) - 27 billion parameter dense model
  - [GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash) - 30 billion parameter Mixture of Experts model, 3 billion active parameters
 
@@ -207,7 +207,7 @@ Alternatively, it can be [built from source](https://github.com/ggml-org/llama.c
  4. On the next screen you'll see the command to launch:
    ```
    # Start a local OpenAI-compatible server with a web UI:
-   llama-server -hf unsloth/Qwen3.5-35B-A3B-GGUF:Q4_K_M
+   llama-server -hf unsloth/Qwen3.6-35B-A3B-GGUF:Q4_K_M
    ```
  5. Go to http://localhost:8080 and chat with the model:
    <br><img width="741" height="236" alt="image" src="images/localhost-llama.cpp.png" />
@@ -288,8 +288,6 @@ It is **critical** for having good agentic coding experience for this feature to
 > 4. Once you get the response, ask the model a follow-up question: "Now expand it to a paragraph".
 > 5. If prompt cache works, barely any "Processing..." is visible the second time, because the second request is 99%+ the same as the first one, the only new thing is the follow-up question. If experience is the same as the first time, prompt caching doesn't work.
 
-> :warning: **Warning:** As of right now, Prompt Caching doesn't work for Qwen3.5 models in LM Studio due to [this bug](https://github.com/lmstudio-ai/lmstudio-bug-tracker/issues/1563). Use llama.cpp for these models.
-
 # Part III — Agentic Workflows
 ***Everything above allows you to run a model. But the real power comes when you wire it into coding agents.***
 
@@ -333,7 +331,7 @@ It is enabled by default in LM Studio, but you need to explicitly set this param
 ### Starting API Servers
 Here's an example how to start llama.cpp server with the essential parameters I discussed above:
 ```
-llama-server -hf unsloth/Qwen3.5-35B-A3B-GGUF:Q4_K_M --jinja -fa on --temp 0.6 --top-p 0.95 --min-p 0.01 --top-k 20 -c 131072 -np 1
+llama-server -hf unsloth/Qwen3.6-35B-A3B-GGUF:Q4_K_M --jinja -fa on --temp 0.6 --top-p 0.95 --min-p 0.01 --top-k 20 -c 131072 -np 1
 ```
 
 LM Studio is a desktop app at its core, but it can function as an API server as well. Go to "Developer" <img width="30" height="29" alt="image" src="images/lmstudio-developer-icon.png" /> tab and start the server:
@@ -378,8 +376,8 @@ If you don't have OpenCode installed yet, follow [instructions](https://opencode
             "output": 32768
           }
         },
-        "Qwen3.5-35B-A3B": {
-          "name": "Qwen3.5-35B-A3B (local)",
+        "Qwen3.6-35B-A3B": {
+          "name": "Qwen3.6-35B-A3B (local)",
           "modalities": { "input": ["image", "text"], "output": ["text"] },
           "limit": {
             "context": 131072,
@@ -404,7 +402,7 @@ ANTHROPIC_BASE_URL="http://localhost:1234" ANTHROPIC_API_KEY="none" CLAUDE_CODE_
 ```
 For llama.cpp:
 ```
-ANTHROPIC_BASE_URL="http://localhost:8080" ANTHROPIC_API_KEY="none" CLAUDE_CODE_AUTO_COMPACT_WINDOW=131072 claude --model unsloth/Qwen3.5-35B-A3B
+ANTHROPIC_BASE_URL="http://localhost:8080" ANTHROPIC_API_KEY="none" CLAUDE_CODE_AUTO_COMPACT_WINDOW=131072 claude --model unsloth/Qwen3.6-35B-A3B
 ```
 
 Alternatively, set these variables in the config file `~/.claude/settings.json`. For Agents Team (a.k.a. "Agent Swarm") you have to set them in the config file to make them available to the agents when they spawn, plus you have to set some additional values:
@@ -433,8 +431,8 @@ In LM Studio Server Settings, enable "Just-in-Time Model Loading" and that's it.
 
 In llama.cpp, provide an `.ini` file with models and their parameters:
 ```ini
-[Qwen3.5-35B-A3B-UD-Q4_K_XL]
-model = <models-folder>/unsloth/Qwen3.5-35B-A3B-GGUF/Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf
+[Qwen3.6-35B-A3B-UD-Q4_K_XL]
+model = <models-folder>/unsloth/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf
 ctx-size = 131072
 temp = 0.7
 top-p = 0.95
