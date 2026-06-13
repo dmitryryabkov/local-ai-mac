@@ -34,6 +34,7 @@ Standalone GPUs still have more raw compute throughput, to set expectations corr
     - [Thinking Mode](#thinking-mode)
     - [Flash Attention](#flash-attention)
     - [Prompt Cache](#prompt-cache)
+    - [Multi-Token Prediction (MTP)](#multi-token-prediction-mtp)
 - [Part III - Agentic Workflows](#part-iii--agentic-workflows)
   - [Configuring API Servers](#configuring-api-servers)
     - [Context Window for Agents](#context-window-for-agents)
@@ -103,7 +104,7 @@ LM Studio supports models in both formats (because it supports both inference en
 ### Recommended Models
 Medium-size models (~20-30B parameters) fit into higher tier consumer hardware and are getting good enough for practical usage. Here are some examples:
  - [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) - 35 billion parameter Mixture of Experts model with 3 billion active parameters
- - [Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) - 27 billion parameter dense model
+ - [Qwen3.6-27B](https://huggingface.co/Qwen/Qwen3.6-27B) - 27 billion parameter dense model
  - [GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash) - 30 billion parameter Mixture of Experts model, 3 billion active parameters
 
 The links above point to the "canonical" versions of these models - the so-called "model cards". They contain a lot of useful information about the models, and even have links to download them, but only in the "canonical" [Safetensors](https://huggingface.co/docs/safetensors/index) format which is not directly usable with the inference engines discussed here.
@@ -266,6 +267,16 @@ In LM Studio: bottom of "Model Settings" → "Prompt Template" text field, add a
 ```
 In llama.cpp: it is a CMD line parameter: `--chat-template-args "{\"enable_thinking\":false}"`
 
+> :bulb: **Tip: Qwen3.6 thinking mode**
+> Qwen3.6 models are significantly more sensitive to sampling parameters than previous Qwen releases. If the recommended settings are not used, the model may enter very long or even effectively infinite thinking loops.
+> 
+> Make sure you configure all parameters from the model card, including `temperature`, `top-k`, `top-p`, `min-p`, `--presence-penalty`, `--repetition-penalty` and enable thinking preservation via:
+```
+--chat-template-kwargs '{"preserve_thinking":true}'
+```
+>
+> In particular, do not assume that settings which worked well for Qwen3.5 will automatically transfer to Qwen3.6.
+
 ### Flash Attention
 [Flash attention](https://en.wikipedia.org/wiki/Attention_(machine_learning)#Flash_attention) is an optimization important for large contexts - it breaks the overall context into smaller, more GPU-digestable chunks. It improves attention computation speed and memory locality, but does NOT reduce prompt cache size.
 
@@ -287,6 +298,33 @@ It is **critical** for having good agentic coding experience for this feature to
 > 3. You'll see "Processing..." in the response window for noticeable time. This is prompt processing without the cache.
 > 4. Once you get the response, ask the model a follow-up question: "Now expand it to a paragraph".
 > 5. If prompt cache works, barely any "Processing..." is visible the second time, because the second request is 99%+ the same as the first one, the only new thing is the follow-up question. If experience is the same as the first time, prompt caching doesn't work.
+
+### Multi-Token Prediction (MTP)
+
+Some recent models support **Multi-Token Prediction (MTP)**, a technique that allows the model to generate multiple tokens per decoding step by using additional prediction heads trained specifically for this purpose. When supported by the model, MTP can significantly improve generation speed without requiring a separate draft model.
+
+At the time of writing, MTP is only supported by **llama.cpp**. To enable it, use:
+
+```
+--spec-type draft-mtp --spec-draft-n-max <N> --spec-draft-p-min <P>
+```
+
+where:
+
+* `--spec-draft-n-max` controls the maximum number of draft tokens generated ahead of the main decoding stream.
+* `--spec-draft-p-min` controls the confidence threshold required for draft token acceptance.
+
+For example:
+
+```
+--spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-p-min 0.7
+```
+
+> :warning: **There is no universally optimal MTP configuration.** The best settings depend on the model, quantization level, hardware, context size, and workload. A configuration that improves coding performance on one machine may reduce throughput on another. For this reason, I recommend benchmarking your specific setup rather than copying values from online examples. To help with this process, I created **MTP Profiler**, a tool that analyzes llama.cpp logs and recommends optimal MTP settings for a particular model and hardware combination:
+> 
+> GitHub: https://github.com/dmitryryabkov/mtp-profiler
+
+In my experience, correctly tuned MTP can provide a noticeable speedup for coding workloads, but the gains vary significantly between models and systems.
 
 # Part III — Agentic Workflows
 ***Everything above allows you to run a model. But the real power comes when you wire it into coding agents.***
